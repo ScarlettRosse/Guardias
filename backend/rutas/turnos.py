@@ -39,8 +39,7 @@ def obtener_turnos_guardia():
     return jsonify(turnos)
 
 
-
-rutas_turnos.route("/turnos/mi-turno-actual", methods=["GET"])
+@rutas_turnos.route("/turnos/mi-turno-actual", methods=["GET"])
 @verificar_rol("guardia")
 def turno_actual_guardia():
     id_guardia = request.headers.get("Usuario_Id")

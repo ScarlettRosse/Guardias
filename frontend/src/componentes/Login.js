@@ -14,11 +14,12 @@ function Login({ setUsuario }) {
     })
     .then(res => {
       const usuario = res.data;
-      if (!usuario || !usuario.id || !usuario.rol) {
+      console.log('Respuesta del backend:', usuario);
+      // SOLO USA usuario, porque el id ya viene bien
+      if (!usuario.id || !usuario.rol) {
         setError("Respuesta de login inválida.");
         return;
       }
-
       localStorage.setItem("usuario", JSON.stringify(usuario));
       setUsuario(usuario);
     })
@@ -31,11 +32,23 @@ function Login({ setUsuario }) {
       <form onSubmit={manejarLogin}>
         <div className="mb-3">
           <label className="form-label">Correo:</label>
-          <input type="email" className="form-control" value={correo} onChange={(e) => setCorreo(e.target.value)} required />
+          <input
+            type="email"
+            className="form-control"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            required
+          />
         </div>
         <div className="mb-3">
           <label className="form-label">Contraseña:</label>
-          <input type="password" className="form-control" value={contrasena} onChange={(e) => setContrasena(e.target.value)} required />
+          <input
+            type="password"
+            className="form-control"
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
+            required
+          />
         </div>
         {error && <div className="alert alert-danger">{error}</div>}
         <button type="submit" className="btn btn-primary">Entrar</button>

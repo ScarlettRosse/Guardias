@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import VistaLocales from './VistaLocales';
 
 function VistaGerente({ usuario }) {
-  const [reportes, setReportes] = useState([]);
-  const [tareas, setTareas] = useState([]);
+  // Estados para otros módulos, si deseas mostrar info adicional
+  const [guardias, setGuardias] = useState([]);
   const [turnos, setTurnos] = useState([]);
 
   useEffect(() => {
-    const headers = { Rol: usuario.rol };
-
-    axios.get('http://localhost:5000/reportes', { headers }).then(res => setReportes(res.data));
-    axios.get('http://localhost:5000/tareas', { headers }).then(res => setTareas(res.data));
-    axios.get('http://localhost:5000/turnos', { headers }).then(res => setTurnos(res.data));
+    const headers = { Rol: usuario.rol, Usuario_Id: usuario.id };
+    axios.get('http://localhost:5000/usuarios/guardias', { headers })
+      .then(res => setGuardias(res.data));
+    axios.get('http://localhost:5000/turnos', { headers })
+      .then(res => setTurnos(res.data));
   }, [usuario]);
 
+  // Cerrar sesión
   const cerrarSesion = () => {
     localStorage.removeItem("usuario");
     window.location.reload();
@@ -26,32 +28,35 @@ function VistaGerente({ usuario }) {
         <button className="btn btn-danger" onClick={cerrarSesion}>Cerrar sesión</button>
       </div>
 
-      <h5 className="mt-4">📋 Reportes</h5>
+      {/* Gestión de Locales */}
+      <VistaLocales usuario={usuario} />
+
+      {/* Lista de Guardias */}
+      <h5 className="mt-4">👮‍♂️ Guardias</h5>
       <ul className="list-group">
-        {reportes.map((r, i) => (
-          <li key={i} className="list-group-item">
-            Guardia: {r.nombre_guardia} - Fecha: {r.fecha}<br />
-            {r.descripcion}
-          </li>
-        ))}
+        {guardias.length > 0 ? (
+          guardias.map((g, i) => (
+            <li key={i} className="list-group-item">
+              {g.nombre} - {g.rut}
+            </li>
+          ))
+        ) : (
+          <li className="list-group-item text-muted">No hay guardias registrados</li>
+        )}
       </ul>
 
-      <h5 className="mt-4">🛠 Tareas</h5>
-      <ul className="list-group">
-        {tareas.map((t, i) => (
-          <li key={i} className="list-group-item">
-            Guardia: {t.nombre_guardia} - Tarea: {t.descripcion}
-          </li>
-        ))}
-      </ul>
-
+      {/* Lista de Turnos */}
       <h5 className="mt-4">📅 Turnos</h5>
       <ul className="list-group">
-        {turnos.map((t, i) => (
-          <li key={i} className="list-group-item">
-            Guardia: {t.nombre_guardia} - Local: {t.local} - Fecha: {t.fecha}
-          </li>
-        ))}
+        {turnos.length > 0 ? (
+          turnos.map((t, i) => (
+            <li key={i} className="list-group-item">
+              Guardia: {t.nombre_guardia} - Local: {t.local || t.id_local} - Fecha: {t.fecha}
+            </li>
+          ))
+        ) : (
+          <li className="list-group-item text-muted">No hay turnos asignados</li>
+        )}
       </ul>
     </div>
   );

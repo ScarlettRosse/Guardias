@@ -6,6 +6,8 @@ from rutas.reportes import rutas_reportes
 from rutas.tareas import rutas_tareas
 from rutas.turnos import rutas_turnos
 from rutas.usuarios import rutas_usuarios
+from rutas.locales import rutas_locales
+
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +21,7 @@ app.register_blueprint(rutas_reportes)
 app.register_blueprint(rutas_tareas)
 app.register_blueprint(rutas_turnos)
 app.register_blueprint(rutas_usuarios)
+app.register_blueprint(rutas_locales)
 
 if __name__ == '__main__':
     app.run(debug=True)

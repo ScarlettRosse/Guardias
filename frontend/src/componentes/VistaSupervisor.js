@@ -16,8 +16,7 @@ function VistaSupervisor({ usuario }) {
     id_local: '',
     fecha: '',
     hora_entrada: '',
-    hora_salida: '',
-    tareas: [''],
+    hora_salida: ''
   });
 
   // Cargar datos iniciales
@@ -44,35 +43,23 @@ function VistaSupervisor({ usuario }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Manejar cambio de tareas individuales
-  const handleTareaChange = (idx, value) => {
-    const nuevasTareas = [...form.tareas];
-    nuevasTareas[idx] = value;
-    setForm({ ...form, tareas: nuevasTareas });
-  };
-
-  // Agregar/remover campos de tarea
-  const agregarTarea = () => setForm({ ...form, tareas: [...form.tareas, ''] });
-  const quitarTarea = idx => {
-    const nuevasTareas = [...form.tareas];
-    nuevasTareas.splice(idx, 1);
-    setForm({ ...form, tareas: nuevasTareas });
-  };
+  // Manejar cambio de formulario
+  // (las tareas se asignarán por separado)
 
   // Enviar formulario
   const handleSubmit = async e => {
     e.preventDefault();
     const headers = { Rol: usuario.rol, Usuario_Id: usuario.id };
     try {
-      const datos = {
-        ...form,
-        tareas: form.tareas.filter(t => t.trim() !== ''),
-      };
+      const datos = { ...form };
       await axios.post('http://localhost:5000/turnos/asignar', datos, { headers });
       setNotificacion({ tipo: 'success', mensaje: 'Turno asignado correctamente' });
       setForm({
-        id_guardia: '', id_local: '', fecha: '',
-        hora_entrada: '', hora_salida: '', tareas: ['']
+        id_guardia: '',
+        id_local: '',
+        fecha: '',
+        hora_entrada: '',
+        hora_salida: ''
       });
       // Recargar turnos
       const res = await axios.get('http://localhost:5000/turnos', { headers });
@@ -176,35 +163,7 @@ function VistaSupervisor({ usuario }) {
               </div>
             </div>
 
-            <div className="mt-3">
-              <label className="form-label">Tareas</label>
-              {form.tareas.map((tarea, idx) => (
-                <div className="input-group mb-2" key={idx}>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder={`Tarea ${idx + 1}`}
-                    value={tarea}
-                    onChange={e => handleTareaChange(idx, e.target.value)}
-                    required
-                  />
-                  {form.tareas.length > 1 && (
-                    <button
-                      type="button"
-                      className="btn btn-outline-danger"
-                      onClick={() => quitarTarea(idx)}
-                    >Quitar</button>
-                  )}
-                  {idx === form.tareas.length - 1 && (
-                    <button
-                      type="button"
-                      className="btn btn-outline-primary"
-                      onClick={agregarTarea}
-                    >+</button>
-                  )}
-                </div>
-              ))}
-            </div>
+
 
             <button type="submit" className="btn btn-success mt-2">Asignar Turno</button>
           </form>
